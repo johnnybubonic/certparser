@@ -1,0 +1,35 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional //EN">
+<html>
+<head>
+  <meta name="GENERATOR" content="mkd2html 2.2.4">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title></title>
+</head>
+<body>
+<h1>Certparser</h1>
+
+<h2>What is it?</h2>
+
+<p>Certparser is a fairly small module that will parse an X.509 certificate (commonly referred to as &ldquo;HTTPS certificates&rdquo;, &ldquo;SSL certificates&rdquo; (even though proper modern implementations should be using TLS),  etc.), either locally as a file (or input stream, etc.) or remote (across a small subset of protocols which will expand with time). X.509 is a complex thing, so if I missed part of it let me know! (RFC numbers and sections <em>very</em> welcome.)</p>
+
+<p>It can be invoked directly as a command:</p>
+
+<p><code>bash
+./certparser.py
+</code></p>
+
+<p>(See <code>./certparser.py --help</code> for more information on usage.)</p>
+
+<p>Or as a python module:</p>
+
+<p>```python
+import certparser</p>
+
+<p>parser = certparser.CertParse(&lsquo;square-r00t.net&rsquo;)
+print(parser.cert)  # prints the fetched certificate
+print(parser.certinfo)  # prints the parsed certificate information
+```</p>
+
+<p>(See <code>pydoc certparser</code> for more information on usage.)</p>
+</body>
+</html>

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 # stdlib
-import argparse
 import collections
 import copy
 import datetime
@@ -12,41 +11,25 @@ import json
 import os
 import pprint
 import re
-import shutil
-import socket
 import ssl
 from urllib import parse
 # PyPi/PIP
-# These are handled automagically.
-# If you'd rather install them via your distro's package manager (YOU SHOULD),
-# then install them first then run this script.
-# Otherwise you'll have to use pip to remove them.
-thrd_prty = {'OpenSSL': 'pyOpenSSL',
-             #'pyasn1': 'pyasn1',
-             #'jinja2': 'Jinja2',
-             'validators': 'validators'}
+import OpenSSL
 
-cols = shutil.get_terminal_size((80, 20)).columns
-
-for mod in thrd_prty:
-    try:
-        globals()[mod] = importlib.import_module(mod)
-    except ImportError:
-        import pip
-        pip.main(['install', '--quiet', '--quiet', '--quiet',
-                  '--user', thrd_prty[mod]])
-        globals()[mod] = importlib.import_module(mod)
 
 class CertParse(object):
-    def __init__(self, target, port = 443, force = None, cert_type = 'pem',
-                 json_fmt = False, starttls = False, extensions = False,
+    def __init__(self, target,
+                 port = 443,
+                 force = None,
+                 cert_type = 'pem',
+                 starttls = False,
+                 extensions = False,
                  alt_names = False):
         self.target = target
         self.port = port
         self.force_type = force
         self.cert_type = cert_type
         self.starttls = starttls
-        self.json_fmt = json_fmt
         self.extensions = extensions
         self.alt_names = alt_names
         self.cert = None
@@ -329,35 +312,6 @@ class CertParse(object):
         domain = parse.urlparse(url).netloc
         return(domain)
 
-    def validIP(self, ip):
-        is_valid = False
-        try:
-            ipaddress.ip_address(self.target)
-            is_valid = True
-        except ValueError:
-            pass
-        return(is_valid)
-
-    def validDomain(self, domain):
-        is_valid = False
-        if not isinstance(validators.domain(domain),
-                          validators.utils.ValidationFailure):
-            is_valid = True
-        return(is_valid)
-
-    def validURL(self, url):
-        is_valid = False
-        if not isinstance(validators.url(url),
-                          validators.utils.ValidationFailure):
-            is_valid = True
-        return(is_valid)
-
-    def validPath(self, path):
-        is_valid = False
-        if os.path.isfile(path):
-            is_valid = True
-        return(is_valid)
-
     def get_type(self):
         if self.force_type:
             # Just run the validator and some cleanup.
@@ -409,66 +363,8 @@ class CertParse(object):
                                 'resource it is'))
         return()
 
-def parseArgs():
-    args = argparse.ArgumentParser()
-    args.add_argument('-e', '--extensions',
-                      dest = 'extensions',
-                      action = 'store_true',
-                      help = ('If specified, include ALL extension info ' +
-                              '(this DRASTICALLY increases the output. You ' +
-                              'have been warned)'))
-    args.add_argument('-a', '--alt-names',
-                      dest = 'alt_names',
-                      action = 'store_true',
-                      help = ('If specified, ONLY include the SAN (Subject ' +
-                              'Alt Name) extension. This is highly ' +
-                              'recommended over -e/--extensions. Ignored if ' +
-                              '-e/--extensions is set (as the SANs are ' +
-                              'included in that)'))
-    args.add_argument('-j','--json',
-                      dest = 'json_fmt',
-                      action = 'store_true',
-                      help = ('If specified, return the results in JSON'))
-    args.add_argument('-f', '--force',
-                      choices = ['url', 'domain', 'ip', 'file'],
-                      default = None,
-                      help = ('If specified, force the TARGET to be parsed ' +
-                              'as the given type'))
-    args.add_argument('-p', '--port',
-                      dest = 'port',
-                      type = int,
-                      default = 443,
-                      help = ('Use a port other than 443 (only used for ' +
-                              'URL/domain/IP address targets)'))
-    args.add_argument('-t', '--cert-type',
-                      dest = 'cert_type',
-                      default = 'pem',
-                      choices = ['pem', 'asn1'],
-                      help = ('The type of certificate (only used for '
-                              'file targets). Note that "DER"-encoded ' +
-                              'certificates should use "asn1". The default ' +
-                              'is pem'))
-#    TODO: I think the starttls process depends on the protocol? If so, this...
-#          won't be feasible.
-#    args.add_argument('-s', '--starttls',
-#                      dest = 'starttls',
-#                      action = 'store_true',
-#                      help = ('If specified, initiate STARTTLS on the ' +
-#                              'target instead of pure SSL/TLS'))
-    args.add_argument('TARGET',
-                      help = ('The target to gather cert info for. Can be a ' +
-                              'filepath (to the certificate, not key etc.), ' +
-                              'a URL/domain, or IP address'))
-    return(args)
-
-def main():
-    args = vars(parseArgs().parse_args())
-    args['target'] = copy.deepcopy(args['TARGET'])
-    del(args['TARGET'])
+def main(args):
     p = CertParse(**args)
     p.getCert()
     p.parseCert()
     p.print()
-
-if __name__ == '__main__':
-    main()
