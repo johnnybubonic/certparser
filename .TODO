@@ -5,3 +5,4 @@
 -- docstring
 -- README.md
 - get it working
+- add other protocols - ldaps and ldap starttls, mail ssl/tls vs mail starttls, etc.
