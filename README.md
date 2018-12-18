@@ -1,5 +1,6 @@
 # Certparser
 
+NOTE: CURRENTLY THIS IS NON-FUNCTIONAL. It is being restructured for packaging in PyPI. If you need it, the standalone version remains [in OpTools](https://git.square-r00t.net/OpTools/tree/ssl_tls/certparser.py) for now.
 
 ## What is it?
 Certparser is a fairly small module that will parse an X.509 certificate. These are commonly referred to as "HTTPS certificates", "SSL certificates" (even though proper modern implementations should be using TLS),  etc.
