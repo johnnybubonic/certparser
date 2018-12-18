@@ -1,0 +1,7 @@
+- finish packaging
+-- https://packaging.python.org/tutorials/packaging-projects/
+-- https://blog.jetbrains.com/pycharm/2017/05/how-to-publish-your-package-on-pypi/
+- finish docs
+-- docstring
+-- README.md
+- get it working
